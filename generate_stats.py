@@ -99,7 +99,10 @@ def get_contributor_stats(repo_full_name):
         return 0, 0
 
     for c in contributors:
-        if c.get("author", {}).get("login", "").lower() == USERNAME.lower():
+        author = c.get("author")
+        if author is None:
+            continue
+        if author.get("login", "").lower() == USERNAME.lower():
             additions = sum(w.get("a", 0) for w in c.get("weeks", []))
             deletions = sum(w.get("d", 0) for w in c.get("weeks", []))
             return additions, deletions
