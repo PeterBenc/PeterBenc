@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
 Generate GitHub stats SVG cards for PeterBenc.
-- Stars: personal repos + manually defined org repos you founded
-- Commits/PRs/Issues: from contributionsCollection (includes all orgs)
-- Lines changed: from repos where user actually contributed
-- Languages: from repos where user actually contributed
+- Stars: personal repos + STAR_REPOS
+- Commits/PRs/Issues: ALL-TIME from contributionsCollection (loops through years)
+- Lines changed + Languages: from personal repos + CONTRIBUTION_REPOS
 """
 
 import os
@@ -12,12 +11,14 @@ import json
 import requests
 import math
 import time
+from datetime import datetime
 
 USERNAME = "PeterBenc"
+START_YEAR = 2016  # Year you started on GitHub
 
 # ============================================================
-# EDIT THIS LIST to control which org repos count toward stars.
-# Only add repos you founded or are the primary author of.
+# Repos that count toward your STAR count.
+# Only repos you founded or are the primary author of.
 # ============================================================
 STAR_REPOS = [
     "vacuumlabs/cardano-hw-cli",
@@ -26,8 +27,32 @@ STAR_REPOS = [
     "nufi-official/nufi-snap",
 ]
 
-# Orgs to scan for contributions (lines changed + languages)
-ORGS = ["nufi-official", "vacuumlabs", "trezor"]
+# ============================================================
+# Repos to scan for LINES CHANGED and LANGUAGES.
+# Your personal repos (PeterBenc/*) are included automatically.
+# ============================================================
+CONTRIBUTION_REPOS = [
+    # nufi-official
+    "nufi-official/nufi",
+    "nufi-official/nufi-snap",
+    "nufi-official/nufi-dapp-sdk",
+    "nufi-official/dapp-client",
+    "nufi-official/sso-demo",
+    "nufi-official/metamask-snap-demo",
+    "nufi-official/adaplays.xyz",
+    "nufi-official/walletless-flow",
+    "nufi-official/fcl-web3auth-plugin",
+    "nufi-official/fcl-discovery",
+    "nufi-official/tokenlists",
+    "nufi-official/zcash-router-sdk",
+    "nufi-official/chrome-extension-tools",
+    # vacuumlabs
+    "vacuumlabs/adalite",
+    "vacuumlabs/cardano-hw-cli",
+    "vacuumlabs/adalite-backend-service",
+    # trezor
+    "trezor/trezor-suite",
+]
 
 TOKEN = os.environ["GH_TOKEN"]
 API_URL = "https://api.github.com/graphql"
@@ -44,7 +69,8 @@ def graphql(query, variables=None):
     return data.get("data", {})
 
 
-def get_user_stats():
+def get_user_repos():
+    """Get user's own repos (for stars + contribution scanning)."""
     query = """
     query($login: String!) {
       user(login: $login) {
@@ -54,7 +80,27 @@ def get_user_stats():
             stargazerCount
           }
         }
-        contributionsCollection {
+      }
+    }
+    """
+    data = graphql(query, {"login": USERNAME})
+    return data.get("user", {}).get("repositories", {}).get("nodes", [])
+
+
+def get_contributions_for_year(year):
+    """Get contributions for a specific year using date range."""
+    from_date = f"{year}-01-01T00:00:00Z"
+    to_date = f"{year}-12-31T23:59:59Z"
+
+    # Clamp to now if year is current year
+    now = datetime.utcnow()
+    if year == now.year:
+        to_date = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    query = """
+    query($login: String!, $from: DateTime!, $to: DateTime!) {
+      user(login: $login) {
+        contributionsCollection(from: $from, to: $to) {
           totalCommitContributions
           restrictedContributionsCount
           totalPullRequestContributions
@@ -63,7 +109,29 @@ def get_user_stats():
       }
     }
     """
-    return graphql(query, {"login": USERNAME})
+    data = graphql(query, {"login": USERNAME, "from": from_date, "to": to_date})
+    contrib = data.get("user", {}).get("contributionsCollection", {})
+    return {
+        "commits": contrib.get("totalCommitContributions", 0) + contrib.get("restrictedContributionsCount", 0),
+        "prs": contrib.get("totalPullRequestContributions", 0),
+        "issues": contrib.get("totalIssueContributions", 0),
+    }
+
+
+def get_all_time_contributions():
+    """Sum contributions across all years from START_YEAR to now."""
+    current_year = datetime.utcnow().year
+    totals = {"commits": 0, "prs": 0, "issues": 0}
+
+    for year in range(START_YEAR, current_year + 1):
+        print(f"  {year}...", end=" ")
+        year_data = get_contributions_for_year(year)
+        print(f"commits={year_data['commits']}, prs={year_data['prs']}, issues={year_data['issues']}")
+        totals["commits"] += year_data["commits"]
+        totals["prs"] += year_data["prs"]
+        totals["issues"] += year_data["issues"]
+
+    return totals
 
 
 def get_repo_stars(owner, name):
@@ -79,8 +147,7 @@ def get_repo_stars(owner, name):
 
 
 def get_contributor_stats(repo_full_name):
-    """Get lines changed by USERNAME in a repo. Returns (additions, deletions).
-    The /stats/contributors endpoint may return 202 on first call while computing."""
+    """Get lines changed by USERNAME. Returns (additions, deletions)."""
     url = f"https://api.github.com/repos/{repo_full_name}/stats/contributors"
     for attempt in range(3):
         r = requests.get(url, headers=REST_HEADERS)
@@ -116,24 +183,6 @@ def get_repo_languages(repo_full_name):
     if r.status_code != 200:
         return {}
     return r.json()
-
-
-def get_org_repos_list(org):
-    repos = []
-    page = 1
-    while True:
-        url = f"https://api.github.com/orgs/{org}/repos?per_page=100&page={page}&type=all"
-        r = requests.get(url, headers=REST_HEADERS)
-        if r.status_code != 200:
-            break
-        data = r.json()
-        if not data:
-            break
-        repos.extend([repo["full_name"] for repo in data])
-        if len(data) < 100:
-            break
-        page += 1
-    return repos
 
 
 LANG_COLORS = {
@@ -210,7 +259,7 @@ def generate_langs_svg(languages):
     bar_svg = ""
     x_offset = 25.0
     bar_width = card_width - 50
-    for i, (lang, size) in enumerate(sorted_langs):
+    for lang, size in sorted_langs:
         width = max((size / total) * bar_width, 1)
         color = LANG_COLORS.get(lang, "#ffffff")
         bar_svg += f'<rect x="{x_offset:.1f}" y="{bar_y}" width="{width:.1f}" height="{bar_height}" fill="{color}"/>'
@@ -246,22 +295,22 @@ def generate_langs_svg(languages):
 def main():
     os.makedirs("profile", exist_ok=True)
 
-    # 1. User stats
-    print("Fetching user stats...")
-    user_data = get_user_stats()
-    user = user_data.get("user", {})
-    user_repos = user.get("repositories", {}).get("nodes", [])
-    contrib = user.get("contributionsCollection", {})
-
-    total_commits = contrib.get("totalCommitContributions", 0) + contrib.get("restrictedContributionsCount", 0)
-    total_prs = contrib.get("totalPullRequestContributions", 0)
-    total_issues = contrib.get("totalIssueContributions", 0)
+    # 1. All-time commits, PRs, issues (looping through years)
+    print("Fetching all-time contributions (year by year)...")
+    totals = get_all_time_contributions()
+    total_commits = totals["commits"]
+    total_prs = totals["prs"]
+    total_issues = totals["issues"]
+    print(f"All-time totals: commits={total_commits}, prs={total_prs}, issues={total_issues}")
 
     # 2. Stars: personal repos
+    print("\nFetching personal repos...")
+    user_repos = get_user_repos()
     personal_stars = sum(r.get("stargazerCount", 0) for r in user_repos)
     print(f"Personal repo stars: {personal_stars}")
 
     # 3. Stars: manually listed org repos
+    print("\nFetching star repos...")
     org_stars = 0
     for repo_full in STAR_REPOS:
         owner, name = repo_full.split("/")
@@ -270,45 +319,56 @@ def main():
         org_stars += stars
 
     total_stars = personal_stars + org_stars
+    print(f"Total stars: {total_stars}")
 
-    # 4. Lines changed + languages: scan all repos user contributed to
-    print("\nScanning for contributions across orgs...")
+    # 4. Lines changed + languages
+    print("\nScanning contributions for lines changed + languages...")
     total_additions = 0
     total_deletions = 0
     languages = {}
     seen_repos = set()
 
-    # Personal repos first
+    # Personal repos
+    print(f"\n--- Personal repos ({len(user_repos)}) ---")
+    personal_additions = 0
+    personal_deletions = 0
     for repo in user_repos:
         full_name = repo.get("nameWithOwner", "")
         if not full_name:
             continue
         seen_repos.add(full_name)
         a, d = get_contributor_stats(full_name)
+        print(f"  {full_name}: +{a} -{d}")
+        total_additions += a
+        total_deletions += d
+        personal_additions += a
+        personal_deletions += d
         if a + d > 0:
-            print(f"  {full_name}: +{a} -{d}")
-            total_additions += a
-            total_deletions += d
             langs = get_repo_languages(full_name)
             for lang, bytes_count in langs.items():
                 languages[lang] = languages.get(lang, 0) + bytes_count
+    print(f"  SUBTOTAL personal: +{personal_additions} -{personal_deletions} = {personal_additions + personal_deletions} lines")
 
-    # Org repos
-    for org in ORGS:
-        print(f"\nScanning {org}...")
-        org_repos = get_org_repos_list(org)
-        for repo_full in org_repos:
-            if repo_full in seen_repos:
-                continue
-            seen_repos.add(repo_full)
-            a, d = get_contributor_stats(repo_full)
-            if a + d > 0:
-                print(f"  {repo_full}: +{a} -{d}")
-                total_additions += a
-                total_deletions += d
-                langs = get_repo_languages(repo_full)
-                for lang, bytes_count in langs.items():
-                    languages[lang] = languages.get(lang, 0) + bytes_count
+    # Defined contribution repos
+    print(f"\n--- Contribution repos ({len(CONTRIBUTION_REPOS)}) ---")
+    contrib_additions = 0
+    contrib_deletions = 0
+    for repo_full in CONTRIBUTION_REPOS:
+        if repo_full in seen_repos:
+            print(f"  {repo_full}: (already counted in personal)")
+            continue
+        seen_repos.add(repo_full)
+        a, d = get_contributor_stats(repo_full)
+        print(f"  {repo_full}: +{a} -{d}")
+        total_additions += a
+        total_deletions += d
+        contrib_additions += a
+        contrib_deletions += d
+        if a + d > 0:
+            langs = get_repo_languages(repo_full)
+            for lang, bytes_count in langs.items():
+                languages[lang] = languages.get(lang, 0) + bytes_count
+    print(f"  SUBTOTAL contribution repos: +{contrib_additions} -{contrib_deletions} = {contrib_additions + contrib_deletions} lines")
 
     lines_changed = total_additions + total_deletions
 
