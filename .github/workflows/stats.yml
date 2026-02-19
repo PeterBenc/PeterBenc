@@ -13,21 +13,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Generate stats card
-        uses: readme-tools/github-readme-stats-action@v1
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          card: stats
-          options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&bg_color=00000000&title_color=ffffff&text_color=ffffff&icon_color=ffffff&ring_color=ffffff&hide_border=true
-          path: profile/stats.svg
-          token: ${{ secrets.GH_PAT }}
+          python-version: "3.12"
 
-      - name: Generate top languages card
-        uses: readme-tools/github-readme-stats-action@v1
-        with:
-          card: top-langs
-          options: username=${{ github.repository_owner }}&layout=compact&langs_count=10&bg_color=00000000&title_color=ffffff&text_color=ffffff&hide_border=true
-          path: profile/top-langs.svg
-          token: ${{ secrets.GH_PAT }}
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Generate stats SVG
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: python generate_stats.py
 
       - name: Commit cards
         run: |
