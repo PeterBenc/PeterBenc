@@ -34,22 +34,22 @@ STAR_REPOS = [
 CONTRIBUTION_REPOS = [
     # nufi-official
     "nufi-official/nufi",
+    "nufi-official/nufi-app",
     "nufi-official/nufi-snap",
     "nufi-official/nufi-dapp-sdk",
-    "nufi-official/dapp-client",
-    "nufi-official/sso-demo",
+    "nufi-official/fundx",
     "nufi-official/metamask-snap-demo",
-    "nufi-official/adaplays.xyz",
-    "nufi-official/walletless-flow",
     "nufi-official/fcl-web3auth-plugin",
-    "nufi-official/fcl-discovery",
-    "nufi-official/tokenlists",
+    "nufi-official/flow-ispo",
     "nufi-official/zcash-router-sdk",
-    "nufi-official/chrome-extension-tools",
+    "nufi-official/nufi-proxies",
+    "nufi-official/nufi-landing-page",
+    "nufi-official/nufi-connect-dashboard",
+    "nufi-official/metamask-key-tree",
+    "nufi-official/brud",
     # vacuumlabs
     "vacuumlabs/adalite",
     "vacuumlabs/cardano-hw-cli",
-    "vacuumlabs/adalite-backend-service",
     # trezor
     "trezor/trezor-suite",
 ]
