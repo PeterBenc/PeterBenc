@@ -206,6 +206,7 @@ def generate_stats_svg(stats):
         ("Stars", format_number(stats["stars"]), "star"),
         ("All-time Contributions", format_number(stats["commits"]), "commit"),
         ("Total PRs", format_number(stats["prs"]), "pr"),
+        ("Total Issues", format_number(stats["issues"]), "issue"),
         ("Lines of Code Changed", format_number(stats["lines_changed"]), "code"),
     ]
 
@@ -213,7 +214,8 @@ def generate_stats_svg(stats):
     icons = {
         "star": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><path d="M8 0.5l2.45 5.04 5.55 0.77-4.02 3.87 0.98 5.52L8 13.07l-4.96 2.63 0.98-5.52L0 6.31l5.55-0.77z" fill="#8b949e"/></svg>',
         "commit": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3" stroke="#8b949e" stroke-width="1.6" fill="none"/><line x1="8" y1="11" x2="8" y2="16" stroke="#8b949e" stroke-width="1.6"/><line x1="8" y1="0" x2="8" y2="5" stroke="#8b949e" stroke-width="1.6"/></svg>',
-        "pr": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><path d="M5 1v7a3 3 0 003 3h2" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="5" cy="13.5" r="2" stroke="#8b949e" stroke-width="1.4" fill="none"/><circle cx="12" cy="11" r="2" stroke="#8b949e" stroke-width="1.4" fill="none"/><path d="M5 1L3 3M5 1l2 2" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>',
+        "pr": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><path d="M10 1l3 3-3 3" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 2v12M13 4H7a2 2 0 00-2 2v0" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>',
+        "issue": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" stroke="#8b949e" stroke-width="1.4" fill="none"/><line x1="8" y1="4.5" x2="8" y2="8.5" stroke="#8b949e" stroke-width="1.8" stroke-linecap="round"/><circle cx="8" cy="11.5" r="1" fill="#8b949e"/></svg>',
         "code": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><path d="M5.5 3.5L1 8l4.5 4.5M10.5 3.5L15 8l-4.5 4.5" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     }
 
@@ -229,13 +231,13 @@ def generate_stats_svg(stats):
         rows_svg += f"""
         <g transform="translate(30, {y})">
             {icon_svg}
-            <text x="24" y="1" fill="#c9d1d9" font-size="14" font-family="Segoe UI, Ubuntu, -apple-system, sans-serif">{label}</text>
-            <text x="{card_width - 60}" y="1" fill="white" font-size="14" font-family="Segoe UI, Ubuntu, -apple-system, sans-serif" text-anchor="end" font-weight="bold">{value}</text>
+            <text x="24" y="1" fill="#8b949e" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">{label}</text>
+            <text x="{card_width - 60}" y="1" fill="#c9d1d9" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" text-anchor="end" font-weight="bold">{value}</text>
         </g>"""
 
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{card_width}" height="{card_height}" viewBox="0 0 {card_width} {card_height}" fill="none">
     <rect x="0.5" y="0.5" width="{card_width - 1}" height="{card_height - 1}" rx="6" fill="none" stroke="#30363d" stroke-width="1"/>
-    <text x="30" y="35" fill="white" font-size="16" font-weight="600" font-family="Segoe UI, Ubuntu, -apple-system, sans-serif">Peter Benc's GitHub Statistics</text>
+    <text x="30" y="35" fill="white" font-size="16" font-weight="600" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">Peter Benc's GitHub Statistics</text>
     <line x1="30" y1="46" x2="{card_width - 30}" y2="46" stroke="#21262d" stroke-width="1"/>
     {rows_svg}
 </svg>"""
@@ -280,7 +282,7 @@ def generate_langs_svg(languages):
         labels_svg += f"""
         <g transform="translate({x}, {y})">
             <circle cx="5" cy="-3" r="5" fill="{color}"/>
-            <text x="15" y="0" fill="#c9d1d9" font-size="12" font-family="Segoe UI, Ubuntu, -apple-system, sans-serif"><tspan font-weight="600">{lang}</tspan> <tspan fill="#8b949e">{pct:.2f}%</tspan></text>
+            <text x="15" y="0" fill="#8b949e" font-size="12" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif"><tspan font-weight="600" fill="#c9d1d9">{lang}</tspan> {pct:.2f}%</text>
         </g>"""
 
     num_rows = math.ceil(len(sorted_langs) / 2)
@@ -288,7 +290,7 @@ def generate_langs_svg(languages):
 
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{card_width}" height="{card_height}" viewBox="0 0 {card_width} {card_height}" fill="none">
     <rect x="0.5" y="0.5" width="{card_width - 1}" height="{card_height - 1}" rx="6" fill="none" stroke="#30363d" stroke-width="1"/>
-    <text x="30" y="35" fill="white" font-size="16" font-weight="600" font-family="Segoe UI, Ubuntu, -apple-system, sans-serif">Languages Used (By File Size)</text>
+    <text x="30" y="35" fill="white" font-size="16" font-weight="600" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">Languages Used (By File Size)</text>
     <line x1="30" y1="46" x2="{card_width - 30}" y2="46" stroke="#21262d" stroke-width="1"/>
     {bar_svg}
     {labels_svg}
