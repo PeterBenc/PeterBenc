@@ -25,6 +25,6 @@
         <g transform="translate(25, 183)">
             <g transform="translate(0, -10)"><path d="M5 3L1 7l4 4M9 3l4 4-4 4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
             <text x="22" y="0" fill="white" font-size="14" font-family="Segoe UI, Ubuntu, sans-serif">Lines of Code Changed:</text>
-            <text x="365" y="0" fill="white" font-size="14" font-family="Segoe UI, Ubuntu, sans-serif" text-anchor="end" font-weight="bold">190.5k</text>
+            <text x="365" y="0" fill="white" font-size="14" font-family="Segoe UI, Ubuntu, sans-serif" text-anchor="end" font-weight="bold">100.9k</text>
         </g>
 </svg>
