@@ -222,7 +222,8 @@ def generate_stats_svg(stats):
     row_height = 34
     padding_top = 60
     card_height = 220
-    card_width = 460
+    card_width = 459
+    value_x = 320
 
     rows_svg = ""
     for i, (label, value, icon_key) in enumerate(items):
@@ -232,7 +233,7 @@ def generate_stats_svg(stats):
         <g transform="translate(30, {y})">
             {icon_svg}
             <text x="24" y="2" fill="#8b949e" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" dominant-baseline="middle">{label}</text>
-            <text x="{card_width - 40}" y="2" fill="#c9d1d9" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" text-anchor="end" font-weight="bold" dominant-baseline="middle">{value}</text>
+            <text x="{value_x}" y="2" fill="#c9d1d9" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" text-anchor="end" font-weight="bold" dominant-baseline="middle">{value}</text>
         </g>"""
 
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{card_width}" height="{card_height}" viewBox="0 0 {card_width} {card_height}" fill="none">
@@ -250,7 +251,7 @@ def generate_langs_svg(languages):
     if total == 0:
         return '<svg xmlns="http://www.w3.org/2000/svg"></svg>'
 
-    card_width = 460
+    card_width = 459
     bar_y = 52
     bar_height = 8
     padding_top = 76
