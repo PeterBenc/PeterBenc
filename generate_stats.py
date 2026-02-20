@@ -219,11 +219,11 @@ def generate_stats_svg(stats):
         "code": '<svg x="0" y="-6" width="14" height="14" viewBox="0 0 16 16"><path d="M5.5 3.5L1 8l4.5 4.5M10.5 3.5L15 8l-4.5 4.5" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     }
 
-    row_height = 34
-    padding_top = 60
+    row_height = 30
+    padding_top = 68
     card_height = 220
     card_width = 459
-    value_x = 320
+    value_x = card_width - 60
 
     rows_svg = ""
     for i, (label, value, icon_key) in enumerate(items):
@@ -237,8 +237,8 @@ def generate_stats_svg(stats):
         </g>"""
 
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{card_width}" height="{card_height}" viewBox="0 0 {card_width} {card_height}" fill="none">
-    <rect x="0.5" y="0.5" width="{card_width - 1}" height="{card_height - 1}" rx="6" fill="none" stroke="#30363d" stroke-width="1"/>
-    <text x="30" y="35" fill="white" font-size="16" font-weight="600" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">Peter Benc's GitHub Statistics</text>
+    <rect x="0.5" y="0.5" width="{card_width - 1}" height="{card_height - 1}" rx="6" fill="none" stroke="#21262d" stroke-width="1"/>
+    <text x="30" y="35" fill="#8b949e" font-size="16" font-weight="600" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">Peter Benc's GitHub Statistics</text>
     <line x1="30" y1="46" x2="{card_width - 30}" y2="46" stroke="#21262d" stroke-width="1"/>
     {rows_svg}
 </svg>"""
@@ -290,8 +290,8 @@ def generate_langs_svg(languages):
     card_height = 220
 
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{card_width}" height="{card_height}" viewBox="0 0 {card_width} {card_height}" fill="none">
-    <rect x="0.5" y="0.5" width="{card_width - 1}" height="{card_height - 1}" rx="6" fill="none" stroke="#30363d" stroke-width="1"/>
-    <text x="30" y="35" fill="white" font-size="16" font-weight="600" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">Languages Used (By File Size)</text>
+    <rect x="0.5" y="0.5" width="{card_width - 1}" height="{card_height - 1}" rx="6" fill="none" stroke="#21262d" stroke-width="1"/>
+    <text x="30" y="35" fill="#8b949e" font-size="16" font-weight="600" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">Languages Used (By File Size)</text>
     <line x1="30" y1="46" x2="{card_width - 30}" y2="46" stroke="#21262d" stroke-width="1"/>
     {bar_svg}
     {labels_svg}
