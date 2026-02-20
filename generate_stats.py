@@ -207,39 +207,41 @@ def format_number(n):
 
 def generate_stats_svg(stats):
     items = [
-        ("Total Stars Earned", format_number(stats["stars"])),
-        ("Total Commits", format_number(stats["commits"])),
-        ("Total PRs", format_number(stats["prs"])),
-        ("Total Issues", format_number(stats["issues"])),
-        ("Lines of Code Changed", format_number(stats["lines_changed"])),
+        ("Stars", format_number(stats["stars"]), "star"),
+        ("Total Commits", format_number(stats["commits"]), "commit"),
+        ("Total PRs", format_number(stats["prs"]), "pr"),
+        ("Total Issues", format_number(stats["issues"]), "issue"),
+        ("Lines of Code Changed", format_number(stats["lines_changed"]), "code"),
     ]
 
-    icons = [
-        '<path d="M7 0.452l2.146 4.432 4.878 0.674-3.551 3.414 0.866 4.848L7 11.586l-4.339 2.234 0.866-4.848L0 5.558l4.878-0.674z" fill="white"/>',
-        '<circle cx="7" cy="7" r="3" stroke="white" stroke-width="1.5" fill="none"/><line x1="7" y1="10" x2="7" y2="14" stroke="white" stroke-width="1.5"/>',
-        '<circle cx="5" cy="4" r="2.5" stroke="white" stroke-width="1.3" fill="none"/><circle cx="9" cy="10" r="2.5" stroke="white" stroke-width="1.3" fill="none"/><line x1="5" y1="6.5" x2="5" y2="14" stroke="white" stroke-width="1.3"/>',
-        '<circle cx="7" cy="7" r="6" stroke="white" stroke-width="1.3" fill="none"/><line x1="7" y1="4" x2="7" y2="8" stroke="white" stroke-width="1.5"/><circle cx="7" cy="10" r="0.8" fill="white"/>',
-        '<path d="M5 3L1 7l4 4M9 3l4 4-4 4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
-    ]
+    icons = {
+        "star": '<path d="M8 0.5l2.45 5.04 5.55 0.77-4.02 3.87 0.98 5.52L8 13.07l-4.96 2.63 0.98-5.52L0 6.31l5.55-0.77z" fill="#8b949e"/>',
+        "commit": '<circle cx="8" cy="8" r="3.5" stroke="#8b949e" stroke-width="1.8" fill="none"/><line x1="8" y1="11.5" x2="8" y2="16" stroke="#8b949e" stroke-width="1.8"/><line x1="8" y1="0" x2="8" y2="4.5" stroke="#8b949e" stroke-width="1.8"/>',
+        "pr": '<path d="M4.5 1v6.5a3 3 0 003 3H11" stroke="#8b949e" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="4.5" cy="13" r="2" stroke="#8b949e" stroke-width="1.5" fill="none"/><circle cx="13" cy="10.5" r="2" stroke="#8b949e" stroke-width="1.5" fill="none"/><path d="M4.5 1L2 3.5M4.5 1L7 3.5" stroke="#8b949e" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
+        "issue": '<circle cx="8" cy="8" r="7" stroke="#8b949e" stroke-width="1.6" fill="none"/><line x1="8" y1="4" x2="8" y2="9" stroke="#8b949e" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="12" r="1" fill="#8b949e"/>',
+        "code": '<path d="M5.5 3.5L1 8l4.5 4.5M10.5 3.5L15 8l-4.5 4.5" stroke="#8b949e" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+    }
 
-    row_height = 32
-    padding_top = 55
-    card_height = padding_top + len(items) * row_height + 15
-    card_width = 420
+    row_height = 34
+    padding_top = 60
+    card_height = padding_top + len(items) * row_height + 20
+    card_width = 380
 
     rows_svg = ""
-    for i, ((label, value), icon_svg) in enumerate(zip(items, icons)):
+    for i, (label, value, icon_key) in enumerate(items):
         y = padding_top + i * row_height
+        icon_svg = icons.get(icon_key, "")
         rows_svg += f"""
-        <g transform="translate(25, {y})">
-            <g transform="translate(0, -10)">{icon_svg}</g>
-            <text x="22" y="0" fill="white" font-size="14" font-family="Segoe UI, Ubuntu, sans-serif">{label}:</text>
-            <text x="{card_width - 55}" y="0" fill="white" font-size="14" font-family="Segoe UI, Ubuntu, sans-serif" text-anchor="end" font-weight="bold">{value}</text>
+        <g transform="translate(30, {y})">
+            <g transform="translate(0, -7)">{icon_svg}</g>
+            <text x="24" y="1" fill="#c9d1d9" font-size="14" font-family="Segoe UI, Ubuntu, -apple-system, sans-serif">{label}</text>
+            <text x="{card_width - 60}" y="1" fill="white" font-size="14" font-family="Segoe UI, Ubuntu, -apple-system, sans-serif" text-anchor="end" font-weight="bold">{value}</text>
         </g>"""
 
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{card_width}" height="{card_height}" viewBox="0 0 {card_width} {card_height}" fill="none">
-    <text x="25" y="30" fill="white" font-size="18" font-weight="bold" font-family="Segoe UI, Ubuntu, sans-serif">Peter Benc's GitHub Statistics</text>
-    <line x1="25" y1="38" x2="{card_width - 25}" y2="38" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+    <rect x="0.5" y="0.5" width="{card_width - 1}" height="{card_height - 1}" rx="6" fill="none" stroke="#30363d" stroke-width="1"/>
+    <text x="30" y="35" fill="white" font-size="16" font-weight="600" font-family="Segoe UI, Ubuntu, -apple-system, sans-serif">Peter Benc's GitHub Statistics</text>
+    <line x1="30" y1="46" x2="{card_width - 30}" y2="46" stroke="#21262d" stroke-width="1"/>
     {rows_svg}
 </svg>"""
     return svg
@@ -251,41 +253,48 @@ def generate_langs_svg(languages):
     if total == 0:
         return '<svg xmlns="http://www.w3.org/2000/svg"></svg>'
 
-    card_width = 420
-    bar_y = 48
+    card_width = 380
+    bar_y = 52
     bar_height = 8
-    padding_top = 72
+    padding_top = 76
 
-    bar_svg = ""
-    x_offset = 25.0
-    bar_width = card_width - 50
+    # Color bar with rounded ends
+    bar_svg = '<clipPath id="barClip"><rect x="30" y="{bar_y}" width="{bar_w}" height="{bar_h}" rx="4"/></clipPath>'.format(
+        bar_y=bar_y, bar_w=card_width - 60, bar_h=bar_height
+    )
+    bar_inner = ""
+    x_offset = 30.0
+    bar_width = card_width - 60
     for lang, size in sorted_langs:
         width = max((size / total) * bar_width, 1)
-        color = LANG_COLORS.get(lang, "#ffffff")
-        bar_svg += f'<rect x="{x_offset:.1f}" y="{bar_y}" width="{width:.1f}" height="{bar_height}" fill="{color}"/>'
+        color = LANG_COLORS.get(lang, "#8b949e")
+        bar_inner += f'<rect x="{x_offset:.1f}" y="{bar_y}" width="{width:.1f}" height="{bar_height}" fill="{color}"/>'
         x_offset += width
+    bar_svg += f'<g clip-path="url(#barClip)">{bar_inner}</g>'
 
+    # Two-column layout for language labels
     labels_svg = ""
-    col_width = (card_width - 50) / 2
+    col_width = (card_width - 60) / 2
     for i, (lang, size) in enumerate(sorted_langs):
         pct = (size / total) * 100
         col = i % 2
         row = i // 2
-        x = 25 + col * col_width
-        y = padding_top + row * 25
-        color = LANG_COLORS.get(lang, "#ffffff")
+        x = 30 + col * col_width
+        y = padding_top + row * 22
+        color = LANG_COLORS.get(lang, "#8b949e")
         labels_svg += f"""
         <g transform="translate({x}, {y})">
-            <circle cx="6" cy="-4" r="6" fill="{color}"/>
-            <text x="18" y="0" fill="white" font-size="12" font-family="Segoe UI, Ubuntu, sans-serif">{lang} {pct:.2f}%</text>
+            <circle cx="5" cy="-3" r="5" fill="{color}"/>
+            <text x="15" y="0" fill="#c9d1d9" font-size="12" font-family="Segoe UI, Ubuntu, -apple-system, sans-serif"><tspan font-weight="600">{lang}</tspan> <tspan fill="#8b949e">{pct:.2f}%</tspan></text>
         </g>"""
 
     num_rows = math.ceil(len(sorted_langs) / 2)
-    card_height = padding_top + num_rows * 25 + 15
+    card_height = padding_top + num_rows * 22 + 20
 
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{card_width}" height="{card_height}" viewBox="0 0 {card_width} {card_height}" fill="none">
-    <text x="25" y="30" fill="white" font-size="18" font-weight="bold" font-family="Segoe UI, Ubuntu, sans-serif">Most Used Languages</text>
-    <line x1="25" y1="38" x2="{card_width - 25}" y2="38" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+    <rect x="0.5" y="0.5" width="{card_width - 1}" height="{card_height - 1}" rx="6" fill="none" stroke="#30363d" stroke-width="1"/>
+    <text x="30" y="35" fill="white" font-size="16" font-weight="600" font-family="Segoe UI, Ubuntu, -apple-system, sans-serif">Languages Used (By File Size)</text>
+    <line x1="30" y1="46" x2="{card_width - 30}" y2="46" stroke="#21262d" stroke-width="1"/>
     {bar_svg}
     {labels_svg}
 </svg>"""
