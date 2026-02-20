@@ -212,11 +212,11 @@ def generate_stats_svg(stats):
 
     # All icons normalized to 16x16 viewBox for consistent alignment
     icons = {
-        "star": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><path d="M8 0.5l2.45 5.04 5.55 0.77-4.02 3.87 0.98 5.52L8 13.07l-4.96 2.63 0.98-5.52L0 6.31l5.55-0.77z" fill="#8b949e"/></svg>',
-        "commit": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3" stroke="#8b949e" stroke-width="1.6" fill="none"/><line x1="8" y1="11" x2="8" y2="16" stroke="#8b949e" stroke-width="1.6"/><line x1="8" y1="0" x2="8" y2="5" stroke="#8b949e" stroke-width="1.6"/></svg>',
-        "pr": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><path d="M10 1l3 3-3 3" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 2v12M13 4H7a2 2 0 00-2 2v0" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>',
-        "issue": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" stroke="#8b949e" stroke-width="1.4" fill="none"/><line x1="8" y1="4.5" x2="8" y2="8.5" stroke="#8b949e" stroke-width="1.8" stroke-linecap="round"/><circle cx="8" cy="11.5" r="1" fill="#8b949e"/></svg>',
-        "code": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><path d="M5.5 3.5L1 8l4.5 4.5M10.5 3.5L15 8l-4.5 4.5" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        "star": '<svg x="0" y="-6" width="14" height="14" viewBox="0 0 16 16"><path d="M8 0.5l2.45 5.04 5.55 0.77-4.02 3.87 0.98 5.52L8 13.07l-4.96 2.63 0.98-5.52L0 6.31l5.55-0.77z" fill="#8b949e"/></svg>',
+        "commit": '<svg x="0" y="-6" width="14" height="14" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3" stroke="#8b949e" stroke-width="1.6" fill="none"/><line x1="8" y1="11" x2="8" y2="16" stroke="#8b949e" stroke-width="1.6"/><line x1="8" y1="0" x2="8" y2="5" stroke="#8b949e" stroke-width="1.6"/></svg>',
+        "pr": '<svg x="0" y="-6" width="14" height="14" viewBox="0 0 16 16"><path d="M10 1l3 3-3 3" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 2v12M13 4H7a2 2 0 00-2 2v0" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>',
+        "issue": '<svg x="0" y="-6" width="14" height="14" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" stroke="#8b949e" stroke-width="1.4" fill="none"/><line x1="8" y1="4.5" x2="8" y2="8.5" stroke="#8b949e" stroke-width="1.8" stroke-linecap="round"/><circle cx="8" cy="11.5" r="1" fill="#8b949e"/></svg>',
+        "code": '<svg x="0" y="-6" width="14" height="14" viewBox="0 0 16 16"><path d="M5.5 3.5L1 8l4.5 4.5M10.5 3.5L15 8l-4.5 4.5" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     }
 
     row_height = 34
@@ -231,8 +231,8 @@ def generate_stats_svg(stats):
         rows_svg += f"""
         <g transform="translate(30, {y})">
             {icon_svg}
-            <text x="24" y="1" fill="#8b949e" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">{label}</text>
-            <text x="{card_width - 60}" y="1" fill="#c9d1d9" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" text-anchor="end" font-weight="bold">{value}</text>
+            <text x="24" y="2" fill="#8b949e" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" dominant-baseline="middle">{label}</text>
+            <text x="{card_width - 40}" y="2" fill="#c9d1d9" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" text-anchor="end" font-weight="bold" dominant-baseline="middle">{value}</text>
         </g>"""
 
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{card_width}" height="{card_height}" viewBox="0 0 {card_width} {card_height}" fill="none">
