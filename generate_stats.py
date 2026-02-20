@@ -198,19 +198,14 @@ LANG_COLORS = {
 
 
 def format_number(n):
-    if n >= 1_000_000:
-        return f"{n / 1_000_000:.1f}M"
-    elif n >= 1_000:
-        return f"{n / 1_000:.1f}k"
-    return str(n)
+    return f"{n:,}"
 
 
 def generate_stats_svg(stats):
     items = [
         ("Stars", format_number(stats["stars"]), "star"),
-        ("Total Commits", format_number(stats["commits"]), "commit"),
+        ("All-time Contributions", format_number(stats["commits"]), "commit"),
         ("Total PRs", format_number(stats["prs"]), "pr"),
-        ("Total Issues", format_number(stats["issues"]), "issue"),
         ("Lines of Code Changed", format_number(stats["lines_changed"]), "code"),
     ]
 
@@ -224,7 +219,7 @@ def generate_stats_svg(stats):
 
     row_height = 34
     padding_top = 60
-    card_height = padding_top + len(items) * row_height + 20
+    card_height = 220
     card_width = 380
 
     rows_svg = ""
@@ -289,7 +284,7 @@ def generate_langs_svg(languages):
         </g>"""
 
     num_rows = math.ceil(len(sorted_langs) / 2)
-    card_height = padding_top + num_rows * 22 + 20
+    card_height = 220
 
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{card_width}" height="{card_height}" viewBox="0 0 {card_width} {card_height}" fill="none">
     <rect x="0.5" y="0.5" width="{card_width - 1}" height="{card_height - 1}" rx="6" fill="none" stroke="#30363d" stroke-width="1"/>
