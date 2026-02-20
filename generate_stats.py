@@ -209,18 +209,18 @@ def generate_stats_svg(stats):
         ("Lines of Code Changed", format_number(stats["lines_changed"]), "code"),
     ]
 
+    # All icons normalized to 16x16 viewBox for consistent alignment
     icons = {
-        "star": '<path d="M8 0.5l2.45 5.04 5.55 0.77-4.02 3.87 0.98 5.52L8 13.07l-4.96 2.63 0.98-5.52L0 6.31l5.55-0.77z" fill="#8b949e"/>',
-        "commit": '<circle cx="8" cy="8" r="3.5" stroke="#8b949e" stroke-width="1.8" fill="none"/><line x1="8" y1="11.5" x2="8" y2="16" stroke="#8b949e" stroke-width="1.8"/><line x1="8" y1="0" x2="8" y2="4.5" stroke="#8b949e" stroke-width="1.8"/>',
-        "pr": '<path d="M4.5 1v6.5a3 3 0 003 3H11" stroke="#8b949e" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="4.5" cy="13" r="2" stroke="#8b949e" stroke-width="1.5" fill="none"/><circle cx="13" cy="10.5" r="2" stroke="#8b949e" stroke-width="1.5" fill="none"/><path d="M4.5 1L2 3.5M4.5 1L7 3.5" stroke="#8b949e" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
-        "issue": '<circle cx="8" cy="8" r="7" stroke="#8b949e" stroke-width="1.6" fill="none"/><line x1="8" y1="4" x2="8" y2="9" stroke="#8b949e" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="12" r="1" fill="#8b949e"/>',
-        "code": '<path d="M5.5 3.5L1 8l4.5 4.5M10.5 3.5L15 8l-4.5 4.5" stroke="#8b949e" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+        "star": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><path d="M8 0.5l2.45 5.04 5.55 0.77-4.02 3.87 0.98 5.52L8 13.07l-4.96 2.63 0.98-5.52L0 6.31l5.55-0.77z" fill="#8b949e"/></svg>',
+        "commit": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3" stroke="#8b949e" stroke-width="1.6" fill="none"/><line x1="8" y1="11" x2="8" y2="16" stroke="#8b949e" stroke-width="1.6"/><line x1="8" y1="0" x2="8" y2="5" stroke="#8b949e" stroke-width="1.6"/></svg>',
+        "pr": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><path d="M5 1v7a3 3 0 003 3h2" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="5" cy="13.5" r="2" stroke="#8b949e" stroke-width="1.4" fill="none"/><circle cx="12" cy="11" r="2" stroke="#8b949e" stroke-width="1.4" fill="none"/><path d="M5 1L3 3M5 1l2 2" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>',
+        "code": '<svg x="0" y="-8" width="16" height="16" viewBox="0 0 16 16"><path d="M5.5 3.5L1 8l4.5 4.5M10.5 3.5L15 8l-4.5 4.5" stroke="#8b949e" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     }
 
     row_height = 34
     padding_top = 60
     card_height = 220
-    card_width = 380
+    card_width = 460
 
     rows_svg = ""
     for i, (label, value, icon_key) in enumerate(items):
@@ -228,7 +228,7 @@ def generate_stats_svg(stats):
         icon_svg = icons.get(icon_key, "")
         rows_svg += f"""
         <g transform="translate(30, {y})">
-            <g transform="translate(0, -7)">{icon_svg}</g>
+            {icon_svg}
             <text x="24" y="1" fill="#c9d1d9" font-size="14" font-family="Segoe UI, Ubuntu, -apple-system, sans-serif">{label}</text>
             <text x="{card_width - 60}" y="1" fill="white" font-size="14" font-family="Segoe UI, Ubuntu, -apple-system, sans-serif" text-anchor="end" font-weight="bold">{value}</text>
         </g>"""
@@ -248,7 +248,7 @@ def generate_langs_svg(languages):
     if total == 0:
         return '<svg xmlns="http://www.w3.org/2000/svg"></svg>'
 
-    card_width = 380
+    card_width = 460
     bar_y = 52
     bar_height = 8
     padding_top = 76
