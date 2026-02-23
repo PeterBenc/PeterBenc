@@ -149,20 +149,29 @@ def get_repo_stars(owner, name):
 def get_contributor_stats(repo_full_name):
     """Get lines changed by USERNAME. Returns (additions, deletions)."""
     url = f"https://api.github.com/repos/{repo_full_name}/stats/contributors"
-    for attempt in range(3):
+    for attempt in range(5):
         r = requests.get(url, headers=REST_HEADERS)
+        print(f"    [{repo_full_name}] attempt {attempt+1}: status={r.status_code}", end="")
         if r.status_code == 200:
+            print(" OK")
             break
         if r.status_code == 202:
-            time.sleep(3)
+            print(" (computing, retrying in 10s...)")
+            time.sleep(10)
             continue
+        if r.status_code == 204:
+            print(" (empty repo)")
+            return 0, 0
+        print(f" (unexpected)")
         return 0, 0
 
     if r.status_code != 200:
+        print(f"    [{repo_full_name}] gave up after 5 attempts")
         return 0, 0
 
     contributors = r.json()
     if not isinstance(contributors, list):
+        print(f"    [{repo_full_name}] unexpected response type: {type(contributors)}")
         return 0, 0
 
     for c in contributors:
@@ -174,6 +183,7 @@ def get_contributor_stats(repo_full_name):
             deletions = sum(w.get("d", 0) for w in c.get("weeks", []))
             return additions, deletions
 
+    print(f"    [{repo_full_name}] user {USERNAME} not found in contributors list")
     return 0, 0
 
 
