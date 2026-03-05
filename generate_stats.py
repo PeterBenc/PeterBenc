@@ -149,7 +149,7 @@ def get_repo_stars(owner, name):
 def get_contributor_stats(repo_full_name):
     """Get lines changed by USERNAME. Returns (additions, deletions)."""
     url = f"https://api.github.com/repos/{repo_full_name}/stats/contributors"
-    for attempt in range(5):
+    for attempt in range(20):
         r = requests.get(url, headers=REST_HEADERS)
         print(f"    [{repo_full_name}] attempt {attempt+1}: status={r.status_code}", end="")
         if r.status_code == 200:
@@ -157,7 +157,7 @@ def get_contributor_stats(repo_full_name):
             break
         if r.status_code == 202:
             print(" (computing, retrying in 10s...)")
-            time.sleep(10)
+            time.sleep(20)
             continue
         if r.status_code == 204:
             print(" (empty repo)")
