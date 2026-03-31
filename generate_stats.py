@@ -309,101 +309,134 @@ def generate_langs_svg(languages):
     return svg
 
 
+CACHE_FILE = "profile/stats_cache.json"
+
+
+def load_cache():
+    """Load last successful stats from cache file."""
+    if os.path.exists(CACHE_FILE):
+        with open(CACHE_FILE, "r") as f:
+            return json.load(f)
+    return {"stats": {}, "languages": {}}
+
+
+def save_cache(cache):
+    """Save current stats to cache file."""
+    with open(CACHE_FILE, "w") as f:
+        json.dump(cache, f, indent=2)
+
+
 def main():
     os.makedirs("profile", exist_ok=True)
+    cache = load_cache()
+    cached_stats = cache.get("stats", {})
+    cached_languages = cache.get("languages", {})
 
     # 1. All-time commits, PRs, issues (looping through years)
-    print("Fetching all-time contributions (year by year)...")
-    totals = get_all_time_contributions()
-    total_commits = totals["commits"]
-    total_prs = totals["prs"]
-    total_issues = totals["issues"]
-    print(f"All-time totals: commits={total_commits}, prs={total_prs}, issues={total_issues}")
+    try:
+        print("Fetching all-time contributions (year by year)...")
+        totals = get_all_time_contributions()
+        cached_stats["commits"] = totals["commits"]
+        cached_stats["prs"] = totals["prs"]
+        cached_stats["issues"] = totals["issues"]
+        print(f"All-time totals: commits={totals['commits']}, prs={totals['prs']}, issues={totals['issues']}")
+    except Exception as e:
+        print(f"Failed to fetch contributions, using cached values: {e}")
 
-    # 2. Stars: personal repos
-    print("\nFetching personal repos...")
-    user_repos = get_user_repos()
-    personal_stars = sum(r.get("stargazerCount", 0) for r in user_repos)
-    print(f"Personal repo stars: {personal_stars}")
+    # 2. Stars
+    try:
+        print("\nFetching personal repos...")
+        user_repos = get_user_repos()
+        personal_stars = sum(r.get("stargazerCount", 0) for r in user_repos)
+        print(f"Personal repo stars: {personal_stars}")
 
-    # 3. Stars: manually listed org repos
-    print("\nFetching star repos...")
-    org_stars = 0
-    for repo_full in STAR_REPOS:
-        owner, name = repo_full.split("/")
-        stars = get_repo_stars(owner, name)
-        print(f"  {repo_full}: {stars} stars")
-        org_stars += stars
+        print("\nFetching star repos...")
+        org_stars = 0
+        for repo_full in STAR_REPOS:
+            owner, name = repo_full.split("/")
+            stars = get_repo_stars(owner, name)
+            print(f"  {repo_full}: {stars} stars")
+            org_stars += stars
 
-    total_stars = personal_stars + org_stars
-    print(f"Total stars: {total_stars}")
+        cached_stats["stars"] = personal_stars + org_stars
+        print(f"Total stars: {cached_stats['stars']}")
+    except Exception as e:
+        print(f"Failed to fetch stars, using cached value: {e}")
+        user_repos = None
 
-    # 4. Lines changed + languages
-    print("\nScanning contributions for lines changed + languages...")
-    total_additions = 0
-    total_deletions = 0
-    languages = {}
-    seen_repos = set()
+    # 3. Lines changed + languages
+    try:
+        print("\nScanning contributions for lines changed + languages...")
+        total_additions = 0
+        total_deletions = 0
+        languages = {}
+        seen_repos = set()
 
-    # Personal repos
-    print(f"\n--- Personal repos ({len(user_repos)}) ---")
-    personal_additions = 0
-    personal_deletions = 0
-    for repo in user_repos:
-        full_name = repo.get("nameWithOwner", "")
-        if not full_name:
-            continue
-        seen_repos.add(full_name)
-        a, d = get_contributor_stats(full_name)
-        print(f"  {full_name}: +{a} -{d}")
-        total_additions += a
-        total_deletions += d
-        personal_additions += a
-        personal_deletions += d
-        if a + d > 0:
-            langs = get_repo_languages(full_name)
-            for lang, bytes_count in langs.items():
-                languages[lang] = languages.get(lang, 0) + bytes_count
-    print(f"  SUBTOTAL personal: +{personal_additions} -{personal_deletions} = {personal_additions + personal_deletions} lines")
+        # Personal repos — use fetched list if available, otherwise skip
+        repos_to_scan = user_repos if user_repos is not None else get_user_repos()
+        print(f"\n--- Personal repos ({len(repos_to_scan)}) ---")
+        personal_additions = 0
+        personal_deletions = 0
+        for repo in repos_to_scan:
+            full_name = repo.get("nameWithOwner", "")
+            if not full_name:
+                continue
+            seen_repos.add(full_name)
+            a, d = get_contributor_stats(full_name)
+            print(f"  {full_name}: +{a} -{d}")
+            total_additions += a
+            total_deletions += d
+            personal_additions += a
+            personal_deletions += d
+            if a + d > 0:
+                langs = get_repo_languages(full_name)
+                for lang, bytes_count in langs.items():
+                    languages[lang] = languages.get(lang, 0) + bytes_count
+        print(f"  SUBTOTAL personal: +{personal_additions} -{personal_deletions} = {personal_additions + personal_deletions} lines")
 
-    # Defined contribution repos
-    print(f"\n--- Contribution repos ({len(CONTRIBUTION_REPOS)}) ---")
-    contrib_additions = 0
-    contrib_deletions = 0
-    for repo_full in CONTRIBUTION_REPOS:
-        if repo_full in seen_repos:
-            print(f"  {repo_full}: (already counted in personal)")
-            continue
-        seen_repos.add(repo_full)
-        a, d = get_contributor_stats(repo_full)
-        print(f"  {repo_full}: +{a} -{d}")
-        total_additions += a
-        total_deletions += d
-        contrib_additions += a
-        contrib_deletions += d
-        if a + d > 0:
-            langs = get_repo_languages(repo_full)
-            for lang, bytes_count in langs.items():
-                languages[lang] = languages.get(lang, 0) + bytes_count
-    print(f"  SUBTOTAL contribution repos: +{contrib_additions} -{contrib_deletions} = {contrib_additions + contrib_deletions} lines")
+        # Defined contribution repos
+        print(f"\n--- Contribution repos ({len(CONTRIBUTION_REPOS)}) ---")
+        contrib_additions = 0
+        contrib_deletions = 0
+        for repo_full in CONTRIBUTION_REPOS:
+            if repo_full in seen_repos:
+                print(f"  {repo_full}: (already counted in personal)")
+                continue
+            seen_repos.add(repo_full)
+            a, d = get_contributor_stats(repo_full)
+            print(f"  {repo_full}: +{a} -{d}")
+            total_additions += a
+            total_deletions += d
+            contrib_additions += a
+            contrib_deletions += d
+            if a + d > 0:
+                langs = get_repo_languages(repo_full)
+                for lang, bytes_count in langs.items():
+                    languages[lang] = languages.get(lang, 0) + bytes_count
+        print(f"  SUBTOTAL contribution repos: +{contrib_additions} -{contrib_deletions} = {contrib_additions + contrib_deletions} lines")
 
-    lines_changed = total_additions + total_deletions
+        cached_stats["lines_changed"] = total_additions + total_deletions
+        cached_languages = languages
+    except Exception as e:
+        print(f"Failed to fetch lines/languages, using cached values: {e}")
 
     stats = {
-        "stars": total_stars,
-        "commits": total_commits,
-        "prs": total_prs,
-        "issues": total_issues,
-        "lines_changed": lines_changed,
+        "stars": cached_stats.get("stars", 0),
+        "commits": cached_stats.get("commits", 0),
+        "prs": cached_stats.get("prs", 0),
+        "issues": cached_stats.get("issues", 0),
+        "lines_changed": cached_stats.get("lines_changed", 0),
     }
+
+    save_cache({"stats": cached_stats, "languages": cached_languages})
 
     print(f"\n{'='*50}")
     print(f"Final stats: {json.dumps(stats, indent=2)}")
-    top_langs = dict(sorted(languages.items(), key=lambda x: x[1], reverse=True)[:10])
+    top_langs = dict(sorted(cached_languages.items(), key=lambda x: x[1], reverse=True)[:10])
     print(f"Top languages: {json.dumps(top_langs, indent=2)}")
 
     stats_svg = generate_stats_svg(stats)
-    langs_svg = generate_langs_svg(languages)
+    langs_svg = generate_langs_svg(cached_languages)
 
     with open("profile/stats.svg", "w") as f:
         f.write(stats_svg)
