@@ -1,0 +1,20 @@
+{
+  "stats": {
+    "commits": 3489,
+    "prs": 631,
+    "issues": 52,
+    "stars": 322,
+    "lines_changed": 107349
+  },
+  "languages": {
+    "Haskell": 2971,
+    "JavaScript": 124455,
+    "HTML": 25516,
+    "Dockerfile": 100,
+    "TypeScript": 524625,
+    "CSS": 1546,
+    "Lua": 7366,
+    "Python": 17928,
+    "Shell": 3184
+  }
+}
