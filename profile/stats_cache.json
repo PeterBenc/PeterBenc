@@ -1,19 +1,10 @@
 {
   "stats": {
-    "commits": 3533,
+    "commits": 3572,
     "prs": 631,
     "issues": 52,
     "stars": 322,
-    "lines_changed": 122758
+    "lines_changed": 0
   },
-  "languages": {
-    "Python": 28004,
-    "JavaScript": 73423,
-    "TypeScript": 722282,
-    "HTML": 36516,
-    "CSS": 5307,
-    "Lua": 7366,
-    "Shell": 3184,
-    "Cadence": 26461
-  }
+  "languages": {}
 }
