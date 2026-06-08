@@ -1,10 +1,34 @@
 {
   "stats": {
-    "commits": 3785,
-    "prs": 636,
+    "commits": 3803,
+    "prs": 642,
     "issues": 52,
     "stars": 322,
-    "lines_changed": 0
+    "lines_changed": 1030152
   },
-  "languages": {}
+  "languages": {
+    "PHP": 616844,
+    "HTML": 201926,
+    "Vue": 17093,
+    "C++": 16032,
+    "JavaScript": 453183,
+    "C": 14502,
+    "Java": 11150,
+    "CSS": 139148,
+    "Ruby": 2999,
+    "Python": 39445,
+    "TypeScript": 23467233,
+    "Shell": 58540,
+    "Rust": 925341,
+    "Handlebars": 3327,
+    "Haskell": 2971,
+    "Dockerfile": 100,
+    "Lua": 19419,
+    "Gherkin": 101865,
+    "Cadence": 444986,
+    "HCL": 26148,
+    "Procfile": 104,
+    "Prolog": 4653,
+    "SCSS": 6620
+  }
 }
