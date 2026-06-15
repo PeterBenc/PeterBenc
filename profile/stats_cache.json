@@ -1,10 +1,10 @@
 {
   "stats": {
-    "commits": 3803,
-    "prs": 642,
+    "commits": 3876,
+    "prs": 644,
     "issues": 52,
     "stars": 322,
-    "lines_changed": 1030152
+    "lines_changed": 1056379
   },
   "languages": {
     "PHP": 616844,
@@ -17,8 +17,8 @@
     "CSS": 139148,
     "Ruby": 2999,
     "Python": 39445,
-    "TypeScript": 23467233,
-    "Shell": 58540,
+    "TypeScript": 23596077,
+    "Shell": 80426,
     "Rust": 925341,
     "Handlebars": 3327,
     "Haskell": 2971,
