@@ -1,24 +1,24 @@
 {
   "stats": {
-    "commits": 3971,
+    "commits": 3997,
     "prs": 645,
     "issues": 52,
     "stars": 322,
-    "lines_changed": 1092157
+    "lines_changed": 1102439
   },
   "languages": {
     "PHP": 616844,
     "HTML": 202225,
     "Vue": 17093,
     "C++": 16032,
-    "JavaScript": 464978,
+    "JavaScript": 493082,
     "C": 14502,
     "Java": 11150,
     "CSS": 141097,
     "Ruby": 2999,
     "Python": 39445,
-    "TypeScript": 23668942,
-    "Shell": 107754,
+    "TypeScript": 23701688,
+    "Shell": 117474,
     "Rust": 925341,
     "Handlebars": 3327,
     "Haskell": 2971,
