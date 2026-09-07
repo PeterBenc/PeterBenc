@@ -1,7 +1,7 @@
 {
   "stats": {
     "commits": 4312,
-    "prs": 663,
+    "prs": 666,
     "issues": 52,
     "stars": 318,
     "lines_changed": 1386455
@@ -11,13 +11,13 @@
     "HTML": 262667,
     "Vue": 17093,
     "C++": 16032,
-    "JavaScript": 514676,
+    "JavaScript": 515309,
     "C": 14502,
     "Java": 11150,
     "CSS": 168255,
     "Ruby": 2999,
     "Python": 68229,
-    "TypeScript": 24235436,
+    "TypeScript": 24253398,
     "Shell": 328360,
     "Rust": 925341,
     "Handlebars": 3327,
@@ -30,6 +30,6 @@
     "HCL": 26148,
     "Procfile": 104,
     "Prolog": 4653,
-    "SCSS": 6620
+    "SCSS": 7262
   }
 }
