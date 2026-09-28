@@ -1,24 +1,24 @@
 {
   "stats": {
-    "commits": 4426,
-    "prs": 674,
-    "issues": 52,
+    "commits": 4441,
+    "prs": 677,
+    "issues": 53,
     "stars": 318,
-    "lines_changed": 1438437
+    "lines_changed": 1443657
   },
   "languages": {
     "PHP": 616844,
     "HTML": 553811,
     "Vue": 17093,
     "C++": 16032,
-    "JavaScript": 631126,
+    "JavaScript": 684035,
     "C": 14502,
     "Java": 11150,
     "CSS": 168255,
     "Ruby": 2999,
     "Python": 72023,
-    "TypeScript": 24516072,
-    "Shell": 375014,
+    "TypeScript": 24562503,
+    "Shell": 377276,
     "Rust": 925341,
     "Handlebars": 3327,
     "Haskell": 2971,
@@ -27,7 +27,7 @@
     "Kotlin": 46043,
     "Gherkin": 101865,
     "Cadence": 444986,
-    "HCL": 26148,
+    "HCL": 25705,
     "Procfile": 104,
     "Prolog": 4653,
     "SCSS": 7262
